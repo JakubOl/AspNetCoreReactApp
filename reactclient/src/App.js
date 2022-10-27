@@ -1,23 +1,24 @@
 import React, { useState } from "react";
+import Constants from "./utilites/Constants";
 
 export default function App() {
   const [posts, setPosts] = useState([]);
 
   function getPosts() {
-    const url = "https://localhost:7254/get-all-posts";
+    const url = Constants.API_URL_GET_ALL_POSTS;
 
     fetch(url, {
-      method: "GET"
-    }).then(response => response.json())
-      .then(postsFromServer => {
-        console.log(postsFromServer);
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((postsFromServer) => {
         setPosts(postsFromServer);
-      }).catch((error) => {
+      })
+      .catch((error) => {
         console.log(error);
         alert(error);
       });
   }
-
 
   return (
     <div className="container">
@@ -29,7 +30,10 @@ export default function App() {
               <button onClick={getPosts} className="btn btn-dark btn-lg w-100">
                 Get Posts from server
               </button>
-              <button onClick={() => { }} className="btn btn-secondary btn-lg w-100 mt-4">
+              <button
+                onClick={() => {}}
+                className="btn btn-secondary btn-lg w-100 mt-4"
+              >
                 Create New Post
               </button>
             </div>
@@ -47,29 +51,50 @@ export default function App() {
         <table className="table table-bordered border-dark">
           <thead>
             <tr>
-              <th scope="col">PostId PK</th>
+              <th scope="col">PostId (PK)</th>
               <th scope="col">Title</th>
               <th scope="col">Content</th>
               <th scope="col">CRUD Operations</th>
             </tr>
           </thead>
           <tbody>
-            {posts.forEach((post) => {
-              <tr key={post.postId}>
-                <th scope="row">{post.postId}</th>
-                <td>{post.title}</td>
-                <td>{post.content}</td>
-                <td>
-                  <button className="btn btn-dark btn-lg mx-3 my-3">Update</button>
-                  <button className="btn btn-secondary btn-lg">Delete</button>
-                </td>
-              </tr>
+            {posts.map((post) => {
+              return (
+                <tr key={post.postId}>
+                  <th scope="row">{post.postId}</th>
+                  <td>{post.title}</td>
+                  <td>{post.content}</td>
+                  <td>
+                    <button className="btn btn-dark btn-lg mx-3 my-3">
+                      Update
+                    </button>
+                    <button className="btn btn-secondary btn-lg">Delete</button>
+                  </td>
+                </tr>
+              );
             })}
           </tbody>
         </table>
 
-        <button onClick={() => setPosts([])} className="btn btn-dark btn-lg w-100">Empty React posts array</button>
+        <button
+          onClick={() => setPosts([])}
+          className="btn btn-dark btn-lg w-100"
+        >
+          Empty React posts array
+        </button>
       </div>
-    )
+    );
+  }
+
+  function onPostCreated(createdPost) {
+    if (createdPost === null) {
+      return;
+    }
+
+    alert(
+      `Post successfully created. After clicking OK, your new post tilted "${createdPost.title}" `
+    );
+
+    getPosts();
   }
 }
