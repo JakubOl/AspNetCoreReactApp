@@ -1,5 +1,6 @@
 const API_BASE_URL_DEVELOPMENT = "https://localhost:7254";
-const API_BASE_URL_PRODUCTION = "https://appname.azurewebsites.net";
+const API_BASE_URL_PRODUCTION =
+  "https://aspnetserver20221028223420.azurewebsites.net";
 
 const ENDPOINTS = {
   GET_ALL_POSTS: "get-all-posts",
