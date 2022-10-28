@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { propTypes } from "react-bootstrap/esm/Image";
 import Constants from "../utilites/Constants";
 
-export default function PostCreateForm(props) {
+export default function PostUpdateForm(props) {
   const initialFormData = Object.freeze({
-    title: "Post x",
-    content: "This is post x and it has some very interested content",
+    title: {props.post.title},
+    content: {props.post.content},
   });
 
   const [formData, setFormData] = useState(initialFormData);
@@ -20,20 +20,20 @@ export default function PostCreateForm(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const postToCreate = {
-      postId: 0,
+    const postToUpdate = {
+      postId: props.post.postId,
       title: formData.title,
       content: formData.content,
     };
 
-    const url = Constants.API_URL_CREATE_POST;
+    const url = Constants.API_URL_UPDATE_POST;
 
     fetch(url, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(postToCreate),
+      body: JSON.stringify(postToUpdate),
     })
       .then((response) => response.json())
       .then((responseFromServer) => {
@@ -44,12 +44,12 @@ export default function PostCreateForm(props) {
         alert(error);
       });
 
-    props.onPostCreated(postToCreate);
+    props.onPostUpdated(postToUpdate);
   };
 
   return (
     <form className="w-100 px-5">
-      <h1 className="mt-5">Create new post</h1>
+      <h1 className="mt-5">Update the post titled "{props.post.title}".</h1>
 
       <div className="mt-5">
         <label className="h3 form-label">Post title</label>
@@ -80,7 +80,7 @@ export default function PostCreateForm(props) {
       </button>
       <button
         type="submit"
-        onClick={() => props.onPostCreated(null)}
+        onClick={() => props.onPostUpdated(null)}
         className="btn btn-secondary btn-lg w-100 mt-3"
       >
         Cancel
