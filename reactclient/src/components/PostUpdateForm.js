@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { propTypes } from "react-bootstrap/esm/Image";
 import Constants from "../utilites/Constants";
 
 export default function PostUpdateForm(props) {
   const initialFormData = Object.freeze({
-    title: {props.post.title},
-    content: {props.post.content},
+    title: props.post.title,
+    content: props.post.content,
   });
 
   const [formData, setFormData] = useState(initialFormData);

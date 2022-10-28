@@ -8,7 +8,7 @@ export default function App() {
   const [showingCreateNewPostForm, setShowingCreateNewPostForm] =
     useState(false);
   const [postCurrentlyBeingUpdated, setPostCurrentlyBeingUpdated] =
-    useState(false);
+    useState(null);
 
   function getPosts() {
     const url = Constants.API_URL_GET_ALL_POSTS;
@@ -19,6 +19,23 @@ export default function App() {
       .then((response) => response.json())
       .then((postsFromServer) => {
         setPosts(postsFromServer);
+      })
+      .catch((error) => {
+        console.log(error);
+        alert(error);
+      });
+  }
+
+  function deletePost(postId) {
+    const url = `${Constants.API_URL_GET_DELETE_POST_BY_ID}/${postId}`;
+
+    fetch(url, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((responseFromServer) => {
+        console.log(responseFromServer);
+        onPostDeleted(postId);
       })
       .catch((error) => {
         console.log(error);
@@ -59,11 +76,11 @@ export default function App() {
           {showingCreateNewPostForm && (
             <PostCreateFrom onPostCreated={onPostCreated} />
           )}
-
+          {console.log(postCurrentlyBeingUpdated)}
           {postCurrentlyBeingUpdated !== null && (
             <PostUpdateForm
               post={postCurrentlyBeingUpdated}
-              onPostCreated={onPostUpdated}
+              onPostUpdated={onPostUpdated}
             />
           )}
         </div>
@@ -97,7 +114,19 @@ export default function App() {
                     >
                       Update
                     </button>
-                    <button className="btn btn-secondary btn-lg">Delete</button>
+                    <button
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `Are you sure you want to delete the post titled "${post.title}"?`
+                          )
+                        )
+                          deletePost(post.postId);
+                      }}
+                      className="btn btn-secondary btn-lg"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               );
@@ -153,5 +182,23 @@ export default function App() {
     alert(
       `Post successfully updated, after clicking OK look for the post with the title "${updatedPost.title}" in the table below to see updates.`
     );
+  }
+
+  function onPostDeleted(deletedPostId) {
+    let postsCopy = [...posts];
+
+    const index = postsCopy.findIndex((postsCopyPost, currentIndex) => {
+      if (postsCopyPost.postId === deletedPostId) {
+        return true;
+      }
+    });
+
+    if (index !== -1) {
+      postsCopy.splice(index, 1);
+    }
+
+    setPosts(postsCopy);
+
+    alert("Post successfully deleted.");
   }
 }
